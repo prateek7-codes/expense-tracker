@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SpendWise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- Ambient background orbs -->
+  <div class="bg-orb bg-orb--1" aria-hidden="true"></div>
+  <div class="bg-orb bg-orb--2" aria-hidden="true"></div>
+
+  <!-- ── Nav ── -->
+  <header class="nav">
+    <div class="nav-inner">
+      <div class="brand">
+        <svg class="brand-icon" viewBox="0 0 28 28" fill="none">
+          <rect width="28" height="28" rx="8" fill="url(#brandGrad)"/>
+          <path d="M9 14h10M14 9v10" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="brandGrad" x1="0" y1="0" x2="28" y2="28">
+              <stop offset="0%" stop-color="#818CF8"/>
+              <stop offset="100%" stop-color="#6366F1"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span class="brand-name">SpendWise</span>
+      </div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="3.5" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M10 2v1.5M10 16.5V18M2 10h1.5M16.5 10H18M4.1 4.1l1.1 1.1M14.8 14.8l1.1 1.1M4.1 15.9l1.1-1.1M14.8 5.2l1.1-1.1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+        <svg class="icon-moon" viewBox="0 0 20 20" fill="none">
+          <path d="M17 11.5a7 7 0 1 1-9-9 5.5 5.5 0 0 0 9 9z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="app">
+
+    <!-- ── Hero ── -->
+    <section class="hero">
+      <div class="hero-glow" aria-hidden="true"></div>
+      <p class="hero-label">Total Balance</p>
+      <h1 class="hero-balance" id="totalBalance">₹0.00</h1>
+      <div class="hero-chips">
+        <div class="chip chip--income">
+          <svg viewBox="0 0 10 10" fill="none">
+            <path d="M5 8V2M2 5l3-3 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="chip-label">Income</span>
+          <span class="chip-value" id="totalIncome">₹0.00</span>
+        </div>
+        <div class="chip chip--expense">
+          <svg viewBox="0 0 10 10" fill="none">
+            <path d="M5 2v6M8 5 5 8 2 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="chip-label">Expenses</span>
+          <span class="chip-value" id="totalExpenses">₹0.00</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Grid ── -->
+    <div class="grid">
+
+      <!-- Left column -->
+      <div class="col-left">
+
+        <!-- Form card -->
+        <div class="card">
+          <h2 class="card-title">New Transaction</h2>
+
+          <div class="seg-control">
+            <button class="seg-btn active" id="expenseBtn" data-type="expense">Expense</button>
+            <button class="seg-btn" id="incomeBtn" data-type="income">Income</button>
+            <div class="seg-indicator" id="segIndicator"></div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" for="description">Description</label>
+            <input class="field-input" id="description" type="text" placeholder="What was this for?" maxlength="60" autocomplete="off"/>
+            <span class="field-error" id="descError"></span>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label class="field-label" for="amount">Amount</label>
+              <div class="input-wrap">
+                <span class="input-sym">₹</span>
+                <input class="field-input has-sym" id="amount" type="number" placeholder="0.00" min="0.01" step="0.01"/>
+              </div>
+              <span class="field-error" id="amtError"></span>
+            </div>
+            <div class="field">
+              <label class="field-label" for="category">Category</label>
+              <select class="field-input field-select" id="category">
+                <option value="">Choose…</option>
+                <optgroup label="Expenses" id="expenseOptions">
+                  <option value="Food">🍔 Food & Dining</option>
+                  <option value="Transport">🚗 Transport</option>
+                  <option value="Shopping">🛍️ Shopping</option>
+                  <option value="Entertainment">🎬 Entertainment</option>
+                  <option value="Health">💊 Health</option>
+                  <option value="Utilities">⚡ Utilities</option>
+                  <option value="Education">📚 Education</option>
+                  <option value="Other">📦 Other</option>
+                </optgroup>
+                <optgroup label="Income" id="incomeOptions" style="display:none">
+                  <option value="Salary">💼 Salary</option>
+                  <option value="Freelance">💻 Freelance</option>
+                  <option value="Investment">📈 Investment</option>
+                  <option value="Gift">🎁 Gift</option>
+                  <option value="Other">📦 Other</option>
+                </optgroup>
+              </select>
+              <span class="field-error" id="catError"></span>
+            </div>
+          </div>
+
+          <button class="btn-primary" id="addTransactionBtn">
+            <svg viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+            Add Transaction
+          </button>
+        </div>
+
+        <!-- Chart card -->
+        <div class="card card--chart">
+          <h2 class="card-title">Breakdown</h2>
+          <div class="chart-stage">
+            <canvas id="analyticsChart"></canvas>
+            <div class="chart-empty" id="chartEmpty">
+              <div class="empty-ring"></div>
+              <span>No expenses yet</span>
+            </div>
+          </div>
+          <div class="chart-legend" id="chartLegend"></div>
+        </div>
+
+      </div>
+
+      <!-- Transactions card -->
+      <div class="card card--list col-right">
+        <div class="list-header">
+          <h2 class="card-title">Transactions</h2>
+          <span class="count-pill" id="txCount">0</span>
+        </div>
+        <div class="tx-scroll" id="transactionsList">
+          <div class="empty-state" id="emptyState">
+            <div class="empty-art">
+              <svg viewBox="0 0 56 56" fill="none">
+                <rect x="4" y="12" width="48" height="34" rx="6" stroke="currentColor" stroke-width="1.5" opacity=".3"/>
+                <rect x="4" y="12" width="48" height="12" rx="6" stroke="currentColor" stroke-width="1.5" opacity=".3"/>
+                <circle cx="14" cy="18" r="2.5" fill="currentColor" opacity=".4"/>
+                <circle cx="22" cy="18" r="2.5" fill="currentColor" opacity=".25"/>
+                <path d="M12 34h12M12 40h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".3"/>
+              </svg>
+            </div>
+            <p class="empty-title">No transactions yet</p>
+            <p class="empty-body">Add your first income or expense above</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
