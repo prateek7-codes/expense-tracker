@@ -164,6 +164,35 @@ function render() {
   renderChart();
 }
 
+
+
+function buildRow(tx) {
+  const isIncome = tx.type === 'income';
+  const row = document.createElement('div');
+  row.className  = 'tx-row';
+  row.dataset.id = tx.id;
+
+  row.innerHTML = `
+    <div class="tx-bar ${isIncome ? 'tx-bar--income' : 'tx-bar--expense'}"></div>
+    <div class="tx-emoji">${EMOJI[tx.category] || '📦'}</div>
+    <div class="tx-info">
+      <div class="tx-desc">${esc(tx.description)}</div>
+      <div class="tx-meta">${tx.category} · ${tx.date}</div>
+    </div>
+    <div class="tx-amount ${isIncome ? 'tx-amount--income' : 'tx-amount--expense'}">
+      ${isIncome ? '+' : '−'}${fmt(tx.amount)}
+    </div>
+    <button class="tx-delete">×</button>
+  `;
+
+  row.querySelector('.tx-delete').addEventListener('click', e => {
+    e.stopPropagation();
+    deleteTransaction(tx.id);
+  });
+
+  return row;
+}
+
 // ── Render Transactions ───────────────────────────────────────
 function renderTransactions() {
   const list  = document.getElementById('transactionsList');
