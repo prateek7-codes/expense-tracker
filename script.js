@@ -167,59 +167,29 @@ function render() {
 // ── Render Transactions ───────────────────────────────────────
 function renderTransactions() {
   const list  = document.getElementById('transactionsList');
-  const empty = document.getElementById('emptyState');
   const badge = document.getElementById('txCount');
 
   badge.textContent = transactions.length;
 
+  // Always rebuild cleanly
+  list.innerHTML = '';
+
   if (transactions.length === 0) {
-    list.innerHTML = '';
-    list.appendChild(empty);
-    empty.style.display = 'flex';
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-art"></div>
+        <p class="empty-title">No transactions yet</p>
+        <p class="empty-body">Add your first income or expense above</p>
+      </div>
+    `;
     return;
   }
 
-  empty.style.display = 'none';
-  const animating = new Set([...list.querySelectorAll('.removing')].map(e => e.dataset.id));
-  list.innerHTML = '';
-
   transactions.forEach((tx, i) => {
-    if (animating.has(tx.id)) return;
     const row = buildRow(tx);
     row.style.animationDelay = `${i * 0.03}s`;
     list.appendChild(row);
   });
-}
-
-function buildRow(tx) {
-  const isIncome = tx.type === 'income';
-  const row = document.createElement('div');
-  row.className  = 'tx-row';
-  row.dataset.id = tx.id;
-
-  row.innerHTML = `
-    <div class="tx-bar ${isIncome ? 'tx-bar--income' : 'tx-bar--expense'}"></div>
-    <div class="tx-emoji" role="img" aria-label="${tx.category}">${EMOJI[tx.category] || '📦'}</div>
-    <div class="tx-info">
-      <div class="tx-desc">${esc(tx.description)}</div>
-      <div class="tx-meta">${tx.category} &middot; ${tx.date}</div>
-    </div>
-    <div class="tx-amount ${isIncome ? 'tx-amount--income' : 'tx-amount--expense'}">
-      ${isIncome ? '+' : '−'}${fmt(tx.amount)}
-    </div>
-    <button class="tx-delete" aria-label="Delete">
-      <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-        <path d="M1.5 1.5 10.5 10.5M10.5 1.5 1.5 10.5"/>
-      </svg>
-    </button>
-  `;
-
-  row.querySelector('.tx-delete').addEventListener('click', e => {
-    e.stopPropagation();
-    deleteTransaction(tx.id);
-  });
-
-  return row;
 }
 
 // ── Render Chart ──────────────────────────────────────────────
@@ -228,17 +198,19 @@ function renderChart() {
   const empty  = document.getElementById('chartEmpty');
   const legend = document.getElementById('chartLegend');
 
+  if (!canvas || !legend) return;
+
   const expTxs = transactions.filter(t => t.type === 'expense');
 
   if (expTxs.length === 0) {
     canvas.style.display = 'none';
-    empty.style.display  = 'flex';
-    legend.innerHTML     = '';
+    if (empty) empty.style.display = 'flex';
+    legend.innerHTML = '';
     return;
   }
 
   canvas.style.display = 'block';
-  empty.style.display  = 'none';
+  if (empty) empty.style.display = 'none';
 
   const map = {};
   expTxs.forEach(t => { map[t.category] = (map[t.category] || 0) + t.amount; });
@@ -258,7 +230,6 @@ function renderChart() {
     </div>
   `).join('');
 }
-
 // ── Draw Donut (animated) ─────────────────────────────────────
 function drawDonut(canvas, data, colors, total, isDark) {
   const dpr  = window.devicePixelRatio || 1;
